@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,44 +36,38 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity cadastra(@RequestBody ProdutoInputDto produtoDto, UriComponentsBuilder uriBuilder) {
-        Categoria categoria = this.categoriaRepository.getReferenceById(produtoDto.getCategoriaId());
-        Produto produto = produtoDto.toProduto(categoria);
-        Produto salvo = this.produtoRepository.save(produto);
+    public ResponseEntity cadastra(@RequestBody @Valid ProdutoInputDto produtoDto, UriComponentsBuilder uriBuilder) {
+        System.out.println("DTO: " + produtoDto);
 
-        return ResponseEntity
-                .created(uriBuilder.path("/produtos/{id}").buildAndExpand(salvo.getId()).toUri())
-                .body(new ProdutoOutputDto(salvo));
+
+
+//        Categoria categoria = this.categoriaRepository.getReferenceById(produtoDto.getCategoriaId());
+//        Produto produto = produtoDto.toProduto(categoria);
+//        Produto salvo = this.produtoRepository.save(produto);
+
+        return ResponseEntity.ok().build();
+//                ResponseEntity
+//                .created(uriBuilder.path("/produtos/{id}").buildAndExpand(salvo.getId()).toUri())
+//                .body(new ProdutoOutputDto(salvo));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity buscaPor(@PathVariable int id) {
-        Optional<Produto> optionalProduto = this.produtoRepository.findById(id);
-
-        if(optionalProduto.isEmpty())
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok(new ProdutoOutputDto(optionalProduto.get()));
+        Produto produto = this.produtoRepository.getReferenceById(id);
+        return ResponseEntity.ok(new ProdutoOutputDto(produto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deletaPor(@PathVariable int id) {
-        Optional<Produto> optional = this.produtoRepository.findById(id);
-        if(optional.isEmpty())
-            return ResponseEntity.notFound().build();
+        Produto produto = this.produtoRepository.getReferenceById(id);
+        this.produtoRepository.deleteById(produto.getId());
 
-        this.produtoRepository.deleteById(id);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new ProdutoOutputDto(produto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity altera(@PathVariable int id, @RequestBody ProdutoInputDto dto) {
-
-        Optional<Produto> optional = this.produtoRepository.findById(id);
-
-        if(optional.isEmpty())
-            return ResponseEntity.notFound().build();
+        this.produtoRepository.getReferenceById(id);
 
         Produto produto = dto.toProduto(this.categoriaRepository.findById(dto.getCategoriaId()).get());
         produto.setId(id);
