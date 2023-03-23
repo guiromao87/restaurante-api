@@ -37,18 +37,13 @@ public class ProdutoController {
 
     @PostMapping
     public ResponseEntity cadastra(@RequestBody @Valid ProdutoInputDto produtoDto, UriComponentsBuilder uriBuilder) {
-        System.out.println("DTO: " + produtoDto);
+        Categoria categoria = this.categoriaRepository.getReferenceById(produtoDto.getCategoriaId());
+        Produto produto = produtoDto.toProduto(categoria);
+        Produto salvo = this.produtoRepository.save(produto);
 
-
-
-//        Categoria categoria = this.categoriaRepository.getReferenceById(produtoDto.getCategoriaId());
-//        Produto produto = produtoDto.toProduto(categoria);
-//        Produto salvo = this.produtoRepository.save(produto);
-
-        return ResponseEntity.ok().build();
-//                ResponseEntity
-//                .created(uriBuilder.path("/produtos/{id}").buildAndExpand(salvo.getId()).toUri())
-//                .body(new ProdutoOutputDto(salvo));
+        return  ResponseEntity
+                .created(uriBuilder.path("/produtos/{id}").buildAndExpand(salvo.getId()).toUri())
+                .body(new ProdutoOutputDto(salvo));
     }
 
     @GetMapping("/{id}")

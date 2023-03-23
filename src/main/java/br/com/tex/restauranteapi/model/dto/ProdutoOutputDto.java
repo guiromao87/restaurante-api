@@ -1,9 +1,13 @@
 package br.com.tex.restauranteapi.model.dto;
 
 import br.com.tex.restauranteapi.model.Produto;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
+@Getter
+@Setter
 public class ProdutoOutputDto {
     private int id;
     private String nome;
@@ -15,21 +19,5 @@ public class ProdutoOutputDto {
         this.nome = produto.getNome();
         this.preco = produto.getPreco();
         this.categoria = produto.getCategoria().getNome();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public BigDecimal getPreco() {
-        return preco;
-    }
-
-    public String getCategoria() {
-        return categoria;
     }
 }
