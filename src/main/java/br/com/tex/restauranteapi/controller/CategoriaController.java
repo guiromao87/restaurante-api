@@ -1,8 +1,7 @@
 package br.com.tex.restauranteapi.controller;
 
 import br.com.tex.restauranteapi.model.Categoria;
-import br.com.tex.restauranteapi.model.dto.CategoriaInputDto;
-import br.com.tex.restauranteapi.model.dto.CategoriaOutputDto;
+import br.com.tex.restauranteapi.model.dto.*;
 import br.com.tex.restauranteapi.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +10,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaController {
-    // Buscar produto por categoria
-
     @Autowired
     private CategoriaRepository categoriaRepository;
 
@@ -29,6 +25,12 @@ public class CategoriaController {
             return ResponseEntity.noContent().build();
 
         return ResponseEntity.ok(categorias.stream().map(c -> new CategoriaOutputDto(c)).toList());
+    }
+
+    @GetMapping("/{id}/produtos")
+    public ResponseEntity buscaProdutoPorCategoria(@PathVariable int id) {
+        Categoria categoria = this.categoriaRepository.getReferenceById(id);
+        return ResponseEntity.ok(new CategoriaComProdutosOutputDto(categoria));
     }
 
     @PostMapping
