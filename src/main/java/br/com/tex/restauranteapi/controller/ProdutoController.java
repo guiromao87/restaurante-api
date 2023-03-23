@@ -7,6 +7,11 @@ import br.com.tex.restauranteapi.model.dto.ProdutoOutputDto;
 import br.com.tex.restauranteapi.repository.CategoriaRepository;
 import br.com.tex.restauranteapi.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -26,13 +31,13 @@ public class ProdutoController {
     private CategoriaRepository categoriaRepository;
 
     @GetMapping
-    public ResponseEntity lista() {
-        List<Produto> produtos =  produtoRepository.findAll();
+    public ResponseEntity lista(@PageableDefault(page = 0, size = 3, direction = Sort.Direction.DESC ,sort = "id") Pageable pageable) {
+        Page<Produto> paginaDeProduto =  produtoRepository.findAll(pageable);
 
-        if(produtos.size() == 0)
+        if(paginaDeProduto.getContent().size() == 0)
             return ResponseEntity.noContent().build();
 
-        return ResponseEntity.ok(produtos.stream().map(produto -> new ProdutoOutputDto(produto)).toList());
+        return ResponseEntity.ok(paginaDeProduto.map(produto -> new ProdutoOutputDto(produto)));
     }
 
     @PostMapping
