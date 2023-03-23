@@ -1,5 +1,8 @@
 package br.com.tex.restauranteapi.model.dto;
 
+import br.com.tex.restauranteapi.model.Categoria;
+import br.com.tex.restauranteapi.model.Produto;
+
 import java.math.BigDecimal;
 
 public class ProdutoInputDto {
@@ -38,5 +41,15 @@ public class ProdutoInputDto {
 
     public void setCategoriaId(Integer categoriaId) {
         this.categoriaId = categoriaId;
+    }
+
+    public Produto toProduto(Categoria categoria) {
+        Produto produto = new Produto();
+        produto.setNome(this.getNome());
+        produto.setDescricao(this.getDescricao());
+        produto.setPreco(this.getPreco());
+        produto.setCategoria(categoria);
+
+        return produto;
     }
 }

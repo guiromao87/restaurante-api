@@ -14,7 +14,7 @@ public class Produto {
     private String descricao;
     private BigDecimal preco;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Categoria categoria;
 
     public Produto() {}

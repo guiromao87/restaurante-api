@@ -3,11 +3,16 @@ package br.com.tex.restauranteapi.controller;
 import br.com.tex.restauranteapi.model.Categoria;
 import br.com.tex.restauranteapi.model.Produto;
 import br.com.tex.restauranteapi.model.dto.ProdutoInputDto;
+import br.com.tex.restauranteapi.model.dto.ProdutoOutputDto;
 import br.com.tex.restauranteapi.repository.CategoriaRepository;
 import br.com.tex.restauranteapi.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,25 +26,23 @@ public class ProdutoController {
     private CategoriaRepository categoriaRepository;
 
     @GetMapping
-    public List<Produto> lista() {
-        return produtoRepository.findAll();
+    public ResponseEntity lista() {
+        List<Produto> produtos =  produtoRepository.findAll();
+
+        if(produtos.size() == 0)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(produtos.stream().map(produto -> new ProdutoOutputDto(produto)).toList());
     }
 
     @PostMapping
-    public Produto cadastra(@RequestBody ProdutoInputDto produtoDto) {
-        System.out.println("Descricao: " + produtoDto.getDescricao());
+    public ResponseEntity cadastra(@RequestBody ProdutoInputDto produtoDto, UriComponentsBuilder uriBuilder) {
         Categoria categoria = this.categoriaRepository.getReferenceById(produtoDto.getCategoriaId());
+        Produto produto = produtoDto.toProduto(categoria);
+        Produto salvo = this.produtoRepository.save(produto);
 
-        System.out.println("Categoria: " + categoria);
-
-        Produto produto = new Produto();
-        produto.setNome(produtoDto.getNome());
-        produto.setDescricao(produtoDto.getDescricao());
-        produto.setPreco(produtoDto.getPreco());
-        produto.setCategoria(categoria);
-
-        System.out.println("produto: " + produto);
-
-        return this.produtoRepository.save(produto);
+        return ResponseEntity
+                .created(uriBuilder.path("/produtos/{id}").buildAndExpand(salvo.getId()).toUri())
+                .body(new ProdutoOutputDto(salvo));
     }
 }
