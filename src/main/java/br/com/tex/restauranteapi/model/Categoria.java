@@ -17,4 +17,8 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
+
+    public Categoria(String nome) {
+        this.nome = nome;
+    }
 }
