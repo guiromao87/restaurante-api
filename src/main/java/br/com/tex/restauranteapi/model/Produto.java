@@ -14,7 +14,7 @@ public class Produto {
     private String descricao;
     private BigDecimal preco;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Categoria categoria;
 
     public Produto() {}
@@ -51,5 +51,22 @@ public class Produto {
         this.preco = preco;
     }
 
+    public Categoria getCategoria() {
+        return categoria;
+    }
 
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    @Override
+    public String toString() {
+        return "Produto{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", preco=" + preco +
+                ", categoria=" + categoria +
+                '}';
+    }
 }
