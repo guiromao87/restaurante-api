@@ -1,0 +1,1 @@
+insert into usuarios (login, senha) values ('gui', '$2a$10$ZX7zl..C.Xd7zqBj8Vr4hOf/y55d0K1Efuj7r71NDO.I7wafoZtlq');
