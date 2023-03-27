@@ -1,0 +1,1 @@
+insert into usuarios (login,senha) values ('rita', '$2a$10$EFAf3InHj8HVIIkY8bw8NOM2L3M8WlzJrxBliPBtf4Pqf.Ym6DjLy');
