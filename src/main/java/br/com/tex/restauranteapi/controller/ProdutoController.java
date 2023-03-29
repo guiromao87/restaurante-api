@@ -1,10 +1,14 @@
 package br.com.tex.restauranteapi.controller;
 
 import br.com.tex.restauranteapi.model.Categoria;
+import br.com.tex.restauranteapi.model.ItemDePedido;
 import br.com.tex.restauranteapi.model.Produto;
+import br.com.tex.restauranteapi.model.Usuario;
+import br.com.tex.restauranteapi.model.dto.ItemDePedidoOutputDto;
 import br.com.tex.restauranteapi.model.dto.ProdutoInputDto;
 import br.com.tex.restauranteapi.model.dto.ProdutoOutputDto;
 import br.com.tex.restauranteapi.repository.CategoriaRepository;
+import br.com.tex.restauranteapi.repository.PedidoRepository;
 import br.com.tex.restauranteapi.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -30,6 +35,9 @@ public class ProdutoController {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
 
     @GetMapping
     public ResponseEntity lista(@PageableDefault(page = 0, size = 3, direction = Sort.Direction.DESC ,sort = "id") Pageable pageable) {
@@ -75,6 +83,16 @@ public class ProdutoController {
 
         Produto alterado = this.produtoRepository.save(produto);
         return ResponseEntity.ok(new ProdutoOutputDto(alterado));
+    }
+
+    @PostMapping("/{id}/pedido")
+    public ItemDePedidoOutputDto pedido(@PathVariable Integer id, @AuthenticationPrincipal Usuario usuario, @RequestBody Integer quantidade) {
+        var produto = this.produtoRepository.findById(id).get();
+        var item = new ItemDePedido(produto, usuario, quantidade);
+
+        var itemSalvo = this.pedidoRepository.save(item);
+
+        return new ItemDePedidoOutputDto(itemSalvo);
     }
 
 

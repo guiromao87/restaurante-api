@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Entity
 @Table(name = "produtos")
