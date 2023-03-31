@@ -24,4 +24,6 @@ public class Produto {
 
     @ManyToOne
     private Categoria categoria;
+
+    public Produto(BigDecimal preco) { this.preco = preco; }
 }

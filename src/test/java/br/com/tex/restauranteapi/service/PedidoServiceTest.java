@@ -1,32 +1,64 @@
 package br.com.tex.restauranteapi.service;
 
+import br.com.tex.restauranteapi.model.ItemDePedido;
+import br.com.tex.restauranteapi.model.Produto;
 import br.com.tex.restauranteapi.model.Usuario;
 import br.com.tex.restauranteapi.repository.PedidoRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoServiceTest {
 
     private Usuario usuario;
-//    private PedidoService pedidoService;
+
+    @Mock
+    private PedidoRepository pedidoRepository;
+
+    private List<ItemDePedido> listaDeItensDePedido;
+
+    private PedidoService pedidoService;
+
+    private Produto produto;
 
     @BeforeEach
     public void setup() {
+        MockitoAnnotations.openMocks(this);
+
         this.usuario = new Usuario(1);
-//        this.pedidoService = new PedidoService();
+        this.produto = new Produto(BigDecimal.TEN);
+        this.listaDeItensDePedido = new ArrayList<>();
+
+        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 1));
+        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 1));
+        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 1));
+
+        this.pedidoService = new PedidoService(pedidoRepository);
     }
 
+    @Test
+    public void deveConterTresPedidosNoCarrinho() {
+        Mockito.when(pedidoRepository.findByUsuario(usuario)).thenReturn(listaDeItensDePedido);
+        var pedido = pedidoService.toPedidoDto(usuario);
 
+        Assertions.assertEquals(3, pedido.getItens().size());
+    }
 
     @Test
-    public void teste() {
-        PedidoRepository repositoryMock = Mockito.mock(PedidoRepository.class);
-        var pedidos = repositoryMock.findByUsuario(usuario);
+    public void naoDeveConterNenhumPedidoNoCarrinho() {
+        List<ItemDePedido> zeroItens = new ArrayList<>();
 
-        System.out.println("Pedidos: " + pedidos.size());
+        Mockito.when(pedidoRepository.findByUsuario(usuario)).thenReturn(zeroItens);
+        var pedido = this.pedidoService.toPedidoDto(usuario);
 
+        Assertions.assertTrue(pedido.getItens().isEmpty());
     }
 
 
