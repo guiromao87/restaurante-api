@@ -1,6 +1,7 @@
 package br.com.tex.restauranteapi.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "usuarios")
 public class Usuario implements UserDetails {
 
@@ -23,6 +25,10 @@ public class Usuario implements UserDetails {
     private Integer id;
     private String login;
     private String senha;
+
+    public Usuario(Integer id) {
+        this.id = id;
+    }
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
