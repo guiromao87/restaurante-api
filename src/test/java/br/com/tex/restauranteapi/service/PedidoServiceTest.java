@@ -33,12 +33,12 @@ public class PedidoServiceTest {
         MockitoAnnotations.openMocks(this);
 
         this.usuario = new Usuario(1);
-        this.produto = new Produto(BigDecimal.TEN);
+        this.produto = new Produto(new BigDecimal(25));
         this.listaDeItensDePedido = new ArrayList<>();
 
-        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 1));
-        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 1));
-        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 1));
+        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 1)); // 25
+        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 2)); // 50
+        this.listaDeItensDePedido.add(new ItemDePedido(produto, usuario, 3)); // 75
 
         this.pedidoService = new PedidoService(pedidoRepository);
     }
@@ -59,6 +59,15 @@ public class PedidoServiceTest {
         var pedido = this.pedidoService.toPedidoDto(usuario);
 
         Assertions.assertTrue(pedido.getItens().isEmpty());
+    }
+
+    @Test
+    public void deveRetornarOTotalDe150() {
+        Mockito.when(pedidoRepository.findByUsuario(usuario)).thenReturn(listaDeItensDePedido);
+        var pedido = this.pedidoService.toPedidoDto(usuario);
+        var total = pedido.getTotal();
+
+        Assertions.assertEquals(new BigDecimal(150), total);
     }
 
 
