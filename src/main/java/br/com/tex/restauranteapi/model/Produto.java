@@ -26,4 +26,8 @@ public class Produto {
     private Categoria categoria;
 
     public Produto(BigDecimal preco) { this.preco = preco; }
+
+    public Produto(Integer id) {
+        this.id = id;
+    }
 }
